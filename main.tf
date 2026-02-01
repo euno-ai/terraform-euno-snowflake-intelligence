@@ -32,7 +32,7 @@ resource "snowflake_api_integration" "euno_mcp" {
 }
 
 locals {
-  api_base_url = "${var.api_gateway_audience}/v2/snowflake_batch"
+  api_base_url = "${var.api_gateway_audience}/mcp/v2/snowflake_batch"
   api_headers = {
     "api-key"    = var.euno_api_key
     "account-id" = var.euno_account_id
