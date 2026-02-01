@@ -190,26 +190,6 @@ SELECT SNOWFLAKE.CORTEX.COMPLETE(
   'Show me all tables in the analytics schema'
 );
 ```
-
-## Migration from Manual Setup
-
-If you previously used the manual SQL setup (`snowflake-setup-external-functions.sql`), this module provides the same functionality with:
-- **99% Automation** - Only agent creation requires manual SQL execution
-- **Infrastructure as Code** - Version controlled and repeatable
-- **Parameterization** - Easy to customize for different environments
-- **Best practices** - Follows Terraform and Snowflake conventions
-
-## Troubleshooting
-
-### "Function already exists" errors
-If you previously ran the manual SQL setup, you may see errors about existing resources. Use `terraform import` to bring them under Terraform management, or drop them manually first.
-
-### Permission denied errors
-Ensure you're running Terraform with a Snowflake user that has `ACCOUNTADMIN` privileges.
-
-### Agent SQL file not found
-The file is generated in the same directory where you run Terraform. Check the `agent_sql_file` output for the exact path.
-
 ## Support
 
 For issues or questions:
@@ -219,4 +199,4 @@ For issues or questions:
 
 ## License
 
-Apache 2.0 - See LICENSE file for details
+MIT - See LICENSE file for details
