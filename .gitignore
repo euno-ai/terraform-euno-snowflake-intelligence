@@ -23,5 +23,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Generated SQL files
-generated_agent.sql
+# No generated files - everything is in Terraform or procedures!

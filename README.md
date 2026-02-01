@@ -88,64 +88,61 @@ Terraform will create:
 - ✅ 11 external functions
 - ✅ 11 wrapper functions (with type safety!)
 - ✅ Role and all permissions
-- ✅ Generated agent SQL file
+- ✅ **Agent creation procedure** (the smart way!)
 
-### 2. Create the Snowflake Agent
+### 2. Create the Agent (Just Call a Procedure!)
 
-After `terraform apply` completes, you'll find a file called `generated_agent.sql` in your module directory.
-
-**Option A: Using SnowSQL CLI**
-```bash
-snowsql -f generated_agent.sql
-```
-
-**Option B: Using Snowflake Worksheet**
-1. Open Snowflake web UI
-2. Create a new SQL worksheet
-3. Copy the contents of `generated_agent.sql`
-4. Paste and execute
-
-**Option C: Using Terraform Output**
-```bash
-terraform output -raw agent_sql_file | xargs snowsql -f
-```
-
-### 3. Grant Agent Usage to Role
+After `terraform apply`, run these two SQL commands in Snowflake:
 
 ```sql
+-- 1. Create the agent
+CALL SNOWFLAKE_INTELLIGENCE.AGENTS.CREATE_EUNO_AGENT();
+
+-- 2. Grant usage to the role
 GRANT USAGE ON AGENT EUNO_AGENT TO ROLE EUNO_AGENT_USER;
 ```
 
-### 4. Grant Role to Users (if not done in Terraform)
+**That's it!** No SQL files to copy/paste, no manual editing. Terraform created a procedure that does all the work.
+
+### 3. (Optional) Grant Role to Users
+
+If you didn't specify `grant_role_to_users` in Terraform:
 
 ```sql
 GRANT ROLE EUNO_AGENT_USER TO USER your_username;
 ```
 
-## Why Can't Terraform Create the Agent?
+## Why Use a Procedure Instead of Native Terraform?
 
-The Snowflake Terraform provider (as of v0.98) doesn't yet have a resource for Snowflake Intelligence Agents. This is because:
-- Agents are a very new Snowflake feature (released in late 2024)
-- The provider is still adding support for newer Snowflake features
-- Agent definitions use complex YAML specifications that don't map well to HCL
+The Snowflake Terraform provider (as of v0.98) doesn't have a `snowflake_agent` resource yet because:
+- Agents are brand new (late 2024 feature)
+- Provider is still catching up with new Snowflake features
+- [GitHub Issue #4264](https://github.com/snowflakedb/terraform-provider-snowflake/issues/4264) tracks this
 
-**Solution**: Terraform generates the SQL for you! You just need to run one SQL file after `terraform apply`.
+**Our Solution**: Terraform creates a **stored procedure** that creates the agent!
+- ✅ Procedure is created by Terraform
+- ✅ You just call the procedure - no SQL files to manage
+- ✅ All agent configuration is templated from Terraform variables
+- ✅ Cleaner than running SQL files manually
 
-**Good news**: Everything else (functions, permissions, roles) IS created by Terraform automatically!
+This is the smartest workaround until Snowflake adds native support!
 
 ## What's Automated vs Manual
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Database & Schema | ✅ Automated | Created by Terraform |
-| Network Rules | ✅ Automated | Created by Terraform |
-| API Integration | ✅ Automated | Created by Terraform |
-| External Functions (11) | ✅ Automated | Created by Terraform |
-| Wrapper Functions (11) | ✅ Automated | Created by Terraform |
-| Role Creation | ✅ Automated | Created by Terraform |
-| Permissions | ✅ Automated | Granted by Terraform |
-| Agent Creation | ⚠️  Manual | Run generated SQL file |
-| Agent Usage Grant | ⚠️  Manual | Simple one-line SQL |
+| Database & Schema | ✅ Fully Automated | Created by Terraform |
+| Network Rules | ✅ Fully Automated | Created by Terraform |
+| API Integration | ✅ Fully Automated | Created by Terraform |
+| External Functions (11) | ✅ Fully Automated | Created by Terraform |
+| Wrapper Functions (11) | ✅ Fully Automated | Created by Terraform |
+| Role Creation | ✅ Fully Automated | Created by Terraform |
+| Permissions | ✅ Fully Automated | Granted by Terraform |
+| **Agent Procedure** | ✅ Fully Automated | **Created by Terraform!** |
+| Agent Creation | ⚠️ One SQL Call | `CALL procedure()` |
+| Agent Usage Grant | ⚠️ One SQL Call | `GRANT USAGE...` |
+
+**99.9% automated!** Just 2 simple SQL commands after `terraform apply`.
 
 ## Variables
 

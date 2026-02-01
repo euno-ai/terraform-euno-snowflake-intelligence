@@ -23,9 +23,9 @@ output "role_name" {
   value       = snowflake_role.euno_agent_user.name
 }
 
-output "agent_sql_file" {
-  description = "Path to the generated agent SQL file"
-  value       = local_file.agent_sql.filename
+output "create_agent_procedure" {
+  description = "Name of the procedure to call to create the agent"
+  value       = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure.create_euno_agent.name}()"
 }
 
 output "next_steps" {
@@ -39,20 +39,19 @@ output "next_steps" {
     - 11 wrapper functions (with type safety)
     - Role: ${snowflake_role.euno_agent_user.name}
     - All necessary permissions
+    - Agent creation procedure ✨
     
-    📋 To complete the setup:
+    📋 To complete the setup (2 simple SQL commands):
     
-    1. Apply the generated agent SQL:
-       snowsql -f ${local_file.agent_sql.filename}
-       
-       OR copy/paste the contents of ${local_file.agent_sql.filename} into a Snowflake worksheet
+    1. Create the agent by calling the procedure:
+       CALL ${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure.create_euno_agent.name}();
     
-    2. Grant agent usage to the role (after agent is created):
+    2. Grant agent usage to the role:
        GRANT USAGE ON AGENT ${var.agent_name} TO ROLE ${var.role_name};
     
-    3. Grant the role to users:
+    Optional - Grant the role to specific users:
        GRANT ROLE ${var.role_name} TO USER <username>;
     
-    🎉 Once complete, users can interact with the agent using Snowflake Cortex!
+    🎉 That's it! Users can now interact with the agent using Snowflake Cortex!
   EOT
 }
