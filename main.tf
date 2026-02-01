@@ -41,7 +41,7 @@ locals {
 
 # External Functions
 resource "snowflake_external_function" "euno_instructions" {
-  name     = "euno_instructions"
+  name     = "EUNO_INSTRUCTIONS"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -70,7 +70,7 @@ resource "snowflake_external_function" "euno_instructions" {
 }
 
 resource "snowflake_external_function" "euno_count_resources" {
-  name     = "euno_count_resources"
+  name     = "EUNO_COUNT_RESOURCES"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -119,7 +119,7 @@ resource "snowflake_external_function" "euno_count_resources" {
 }
 
 resource "snowflake_external_function" "euno_fetch_single_resource" {
-  name     = "euno_fetch_single_resource"
+  name     = "EUNO_FETCH_SINGLE_RESOURCE"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -153,7 +153,7 @@ resource "snowflake_external_function" "euno_fetch_single_resource" {
 }
 
 resource "snowflake_external_function" "euno_find_resource_by_name" {
-  name     = "euno_find_resource_by_name"
+  name     = "EUNO_FIND_RESOURCE_BY_NAME"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -197,7 +197,7 @@ resource "snowflake_external_function" "euno_find_resource_by_name" {
 }
 
 resource "snowflake_external_function" "euno_find_resources_for_topic" {
-  name     = "euno_find_resources_for_topic"
+  name     = "EUNO_FIND_RESOURCES_FOR_TOPIC"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -241,7 +241,7 @@ resource "snowflake_external_function" "euno_find_resources_for_topic" {
 }
 
 resource "snowflake_external_function" "euno_get_upstream_lineage" {
-  name     = "euno_get_upstream_lineage"
+  name     = "EUNO_GET_UPSTREAM_LINEAGE"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -290,7 +290,7 @@ resource "snowflake_external_function" "euno_get_upstream_lineage" {
 }
 
 resource "snowflake_external_function" "euno_resource_impact_analysis" {
-  name     = "euno_resource_impact_analysis"
+  name     = "EUNO_RESOURCE_IMPACT_ANALYSIS"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -319,7 +319,7 @@ resource "snowflake_external_function" "euno_resource_impact_analysis" {
 }
 
 resource "snowflake_external_function" "euno_search_resources" {
-  name     = "euno_search_resources"
+  name     = "EUNO_SEARCH_RESOURCES"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -378,7 +378,7 @@ resource "snowflake_external_function" "euno_search_resources" {
 }
 
 resource "snowflake_external_function" "euno_documentation_search" {
-  name     = "euno_documentation_search"
+  name     = "EUNO_DOCUMENTATION_SEARCH"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -407,7 +407,7 @@ resource "snowflake_external_function" "euno_documentation_search" {
 }
 
 resource "snowflake_external_function" "euno_documentation_get_full_document" {
-  name     = "euno_documentation_get_full_document"
+  name     = "EUNO_DOCUMENTATION_GET_FULL_DOCUMENT"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -436,7 +436,7 @@ resource "snowflake_external_function" "euno_documentation_get_full_document" {
 }
 
 resource "snowflake_external_function" "euno_documentation_get_surrounding_context" {
-  name     = "euno_documentation_get_surrounding_context"
+  name     = "EUNO_DOCUMENTATION_GET_SURROUNDING_CONTEXT"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 

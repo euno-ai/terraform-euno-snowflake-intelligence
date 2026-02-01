@@ -55,7 +55,7 @@ variable "api_gateway_audience" {
 variable "network_rule_name" {
   description = "Name of the network rule for API Gateway"
   type        = string
-  default     = "euno_api_gateway_network_rule"
+  default     = "EUNO_API_GATEWAY_NETWORK_RULE"
 }
 
 variable "api_integration_name" {

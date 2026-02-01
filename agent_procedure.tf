@@ -3,7 +3,7 @@
 # This is cleaner than running a SQL file!
 
 resource "snowflake_procedure_javascript" "create_euno_agent" {
-  name     = "create_euno_agent"
+  name     = "CREATE_EUNO_AGENT"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 

@@ -3,7 +3,7 @@
 
 # 1. EUNO_INSTRUCTIONS: Get detailed instructions on using Euno MCP server
 resource "snowflake_function" "euno_instructions_wrapper" {
-  name     = "euno_instructions_wrapper"
+  name     = "EUNO_INSTRUCTIONS_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -14,7 +14,7 @@ resource "snowflake_function" "euno_instructions_wrapper" {
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"euno_instructions\"(TO_VARIANT(page))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_INSTRUCTIONS\"(TO_VARIANT(page))::STRING"
   comment     = "Wrapper function for euno_instructions with type safety"
 
   depends_on = [snowflake_external_function.euno_instructions]
@@ -22,7 +22,7 @@ resource "snowflake_function" "euno_instructions_wrapper" {
 
 # 2. COUNT_RESOURCES: Count resources matching a query with optional grouping
 resource "snowflake_function" "euno_count_resources_wrapper" {
-  name     = "euno_count_resources_wrapper"
+  name     = "EUNO_COUNT_RESOURCES_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -54,7 +54,7 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_count_resources"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_COUNT_RESOURCES"(
       TO_VARIANT(query),
       TO_VARIANT(reasoning),
       TO_VARIANT(group_by_property),
@@ -69,7 +69,7 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
 
 # 3. FETCH_SINGLE_RESOURCE: Retrieve a single resource by URI
 resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
-  name     = "euno_fetch_single_resource_wrapper"
+  name     = "EUNO_FETCH_SINGLE_RESOURCE_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -86,7 +86,7 @@ resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_fetch_single_resource"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FETCH_SINGLE_RESOURCE"(
       TO_VARIANT(resource_uri),
       TO_VARIANT(CASE WHEN properties_to_fetch = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_fetch, ',') END)
     )::STRING
@@ -98,7 +98,7 @@ resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
 
 # 4. FIND_RESOURCE_BY_NAME: Find resources by name using similarity matching
 resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
-  name     = "euno_find_resource_by_name_wrapper"
+  name     = "EUNO_FIND_RESOURCE_BY_NAME_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -125,7 +125,7 @@ resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_find_resource_by_name"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCE_BY_NAME"(
       TO_VARIANT(resource_name),
       TO_VARIANT(reasoning),
       TO_VARIANT(CASE WHEN filter_by_resource_types = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(filter_by_resource_types, ',') END),
@@ -139,7 +139,7 @@ resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
 
 # 5. FIND_RESOURCES_FOR_TOPIC: Find resources related to a topic using semantic search
 resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
-  name     = "euno_find_resources_for_topic_wrapper"
+  name     = "EUNO_FIND_RESOURCES_FOR_TOPIC_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -166,7 +166,7 @@ resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_find_resources_for_topic"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCES_FOR_TOPIC"(
       TO_VARIANT(CASE WHEN query_strings = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(query_strings, ',') END),
       TO_VARIANT(reasoning),
       TO_VARIANT(CASE WHEN filter_by_resource_types = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(filter_by_resource_types, ',') END),
@@ -180,7 +180,7 @@ resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
 
 # 6. GET_UPSTREAM_LINEAGE: Get upstream lineage/dependencies for a resource
 resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
-  name     = "euno_get_upstream_lineage_wrapper"
+  name     = "EUNO_GET_UPSTREAM_LINEAGE_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -212,7 +212,7 @@ resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_get_upstream_lineage"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_GET_UPSTREAM_LINEAGE"(
       TO_VARIANT(resource_uri),
       TO_VARIANT(reasoning),
       TO_VARIANT(CASE WHEN properties_to_fetch = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_fetch, ',') END),
@@ -227,7 +227,7 @@ resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
 
 # 7. RESOURCE_IMPACT_ANALYSIS: Analyze downstream impact of changes to a resource
 resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
-  name     = "euno_resource_impact_analysis_wrapper"
+  name     = "EUNO_RESOURCE_IMPACT_ANALYSIS_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -238,7 +238,7 @@ resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"euno_resource_impact_analysis\"(TO_VARIANT(uri))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_RESOURCE_IMPACT_ANALYSIS\"(TO_VARIANT(uri))::STRING"
   comment     = "Wrapper function for euno_resource_impact_analysis with type safety"
 
   depends_on = [snowflake_external_function.euno_resource_impact_analysis]
@@ -246,7 +246,7 @@ resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
 
 # 8. SEARCH_RESOURCES: Advanced search with EQL or natural language queries
 resource "snowflake_function" "euno_search_resources_wrapper" {
-  name     = "euno_search_resources_wrapper"
+  name     = "EUNO_SEARCH_RESOURCES_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -288,7 +288,7 @@ resource "snowflake_function" "euno_search_resources_wrapper" {
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_search_resources"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_SEARCH_RESOURCES"(
       TO_VARIANT(query),
       TO_VARIANT(reasoning),
       TO_VARIANT(resource_relationship_schema),
@@ -305,7 +305,7 @@ resource "snowflake_function" "euno_search_resources_wrapper" {
 
 # 9. DOCUMENTATION_SEARCH: Search Euno documentation
 resource "snowflake_function" "euno_documentation_search_wrapper" {
-  name     = "euno_documentation_search_wrapper"
+  name     = "EUNO_DOCUMENTATION_SEARCH_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -316,7 +316,7 @@ resource "snowflake_function" "euno_documentation_search_wrapper" {
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"euno_documentation_search\"(TO_VARIANT(query))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_SEARCH\"(TO_VARIANT(query))::STRING"
   comment     = "Wrapper function for euno_documentation_search with type safety"
 
   depends_on = [snowflake_external_function.euno_documentation_search]
@@ -324,7 +324,7 @@ resource "snowflake_function" "euno_documentation_search_wrapper" {
 
 # 10. DOCUMENTATION_GET_FULL_DOCUMENT: Retrieve full documentation by URL
 resource "snowflake_function" "euno_documentation_get_full_document_wrapper" {
-  name     = "euno_documentation_get_full_document_wrapper"
+  name     = "EUNO_DOCUMENTATION_GET_FULL_DOCUMENT_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -335,7 +335,7 @@ resource "snowflake_function" "euno_documentation_get_full_document_wrapper" {
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"euno_documentation_get_full_document\"(TO_VARIANT(url))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_GET_FULL_DOCUMENT\"(TO_VARIANT(url))::STRING"
   comment     = "Wrapper function for euno_documentation_get_full_document with type safety"
 
   depends_on = [snowflake_external_function.euno_documentation_get_full_document]
@@ -343,7 +343,7 @@ resource "snowflake_function" "euno_documentation_get_full_document_wrapper" {
 
 # 11. DOCUMENTATION_GET_SURROUNDING_CONTEXT: Get context around a documentation chunk
 resource "snowflake_function" "euno_documentation_get_surrounding_context_wrapper" {
-  name     = "euno_documentation_get_surrounding_context_wrapper"
+  name     = "EUNO_DOCUMENTATION_GET_SURROUNDING_CONTEXT_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
@@ -360,7 +360,7 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context_wrappe
   return_type = "STRING"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."euno_documentation_get_surrounding_context"(
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_DOCUMENTATION_GET_SURROUNDING_CONTEXT"(
       TO_VARIANT(chunk_id),
       TO_VARIANT(window_size)
     )::STRING
