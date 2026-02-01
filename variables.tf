@@ -61,7 +61,7 @@ variable "network_rule_name" {
 variable "api_integration_name" {
   description = "Name of the API integration"
   type        = string
-  default     = "euno_mcp_api_integration"
+  default     = "EUNO_MCP_API_INTEGRATION"
 }
 
 variable "orchestration_model" {
