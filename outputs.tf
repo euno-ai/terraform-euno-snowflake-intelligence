@@ -35,8 +35,8 @@ output "next_steps" {
     - Database: ${snowflake_database.intelligence.name}
     - Schema: ${snowflake_schema.agents.name}
     - Network rule and API integration
-    - 11 external functions
-    - 11 wrapper functions (with type safety)
+    - 12 external functions (v2 API)
+    - 12 wrapper functions (with type safety)
     - Role: ${snowflake_role.euno_agent_user.name}
     - All necessary permissions
     - Agent creation procedure ✨
