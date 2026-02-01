@@ -43,13 +43,13 @@ variable "role_name" {
 variable "api_gateway_host" {
   description = "Euno API Gateway host (without https://)"
   type        = string
-  default     = "euno-mcp-gateway-dev-7a33ocyx.uc.gateway.dev"
+  default     = "euno-mcp-gateway-prod-5k67unwb.uc.gateway.dev"
 }
 
 variable "api_gateway_audience" {
   description = "Google API Gateway audience URL"
   type        = string
-  default     = "https://euno-mcp-gateway-dev-7a33ocyx.uc.gateway.dev"
+  default     = "https://euno-mcp-gateway-prod-5k67unwb.uc.gateway.dev"
 }
 
 variable "network_rule_name" {
