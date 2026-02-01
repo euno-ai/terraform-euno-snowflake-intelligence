@@ -18,9 +18,9 @@ This module creates:
 2. **Network Rule** - Allows egress to Euno API Gateway
 3. **API Integration** - Configures Google API Gateway authentication
 4. **External Functions** - 11 functions for interacting with Euno API
-5. **Wrapper Functions** - Type-safe SQL wrappers (via SQL template)
-6. **Snowflake Agent** - AI agent powered by Claude (via SQL template)
-7. **Roles and Permissions** - Access control setup (via SQL template)
+5. **Wrapper Functions** - Type-safe SQL wrappers (created by Terraform!)
+6. **Role and Permissions** - Complete access control setup
+7. **Agent SQL File** - Generated SQL for creating the Snowflake Agent
 
 ## Prerequisites
 
@@ -74,71 +74,78 @@ module "euno_agent" {
 
 ## Installation Steps
 
-1. **Run Terraform**:
-   ```bash
-   terraform init
-   terraform plan
-   terraform apply
-   ```
+### 1. Run Terraform
 
-2. **Apply SQL Templates**:
-   After Terraform completes, you need to run three SQL scripts in order:
+```bash
+terraform init
+terraform plan
+terraform apply
+```
 
-   a. **Generate wrapper functions SQL**:
-   ```bash
-   # Replace template variables
-   sed -e "s/\${DATABASE_NAME}/SNOWFLAKE_INTELLIGENCE/g" \
-       -e "s/\${SCHEMA_NAME}/AGENTS/g" \
-       wrapper_functions.sql.tpl > wrapper_functions.sql
-   ```
+Terraform will create:
+- ✅ Database and schema
+- ✅ Network rule and API integration
+- ✅ 11 external functions
+- ✅ 11 wrapper functions (with type safety!)
+- ✅ Role and all permissions
+- ✅ Generated agent SQL file
 
-   b. **Generate agent definition SQL**:
-   ```bash
-   sed -e "s/\${DATABASE_NAME}/SNOWFLAKE_INTELLIGENCE/g" \
-       -e "s/\${SCHEMA_NAME}/AGENTS/g" \
-       -e "s/\${AGENT_NAME}/EUNO_AGENT/g" \
-       -e "s/\${WAREHOUSE_NAME}/CORE/g" \
-       -e "s/\${ORCHESTRATION_MODEL}/claude-sonnet-4-5/g" \
-       -e "s/\${BUDGET_SECONDS}/300/g" \
-       -e "s/\${BUDGET_TOKENS}/160000/g" \
-       -e "s/\${AGENT_DISPLAY_NAME}/Euno.ai Agent GW/g" \
-       -e "s/\${AGENT_AVATAR}/CirclesAgentIcon/g" \
-       -e "s/\${AGENT_COLOR}/orange/g" \
-       agent_definition.sql.tpl > agent_definition.sql
-   ```
+### 2. Create the Snowflake Agent
 
-   c. **Generate permissions SQL**:
-   ```bash
-   sed -e "s/\${DATABASE_NAME}/SNOWFLAKE_INTELLIGENCE/g" \
-       -e "s/\${SCHEMA_NAME}/AGENTS/g" \
-       -e "s/\${AGENT_NAME}/EUNO_AGENT/g" \
-       -e "s/\${ROLE_NAME}/EUNO_AGENT_USER/g" \
-       -e "s/\${WAREHOUSE_NAME}/CORE/g" \
-       -e "s/\${API_INTEGRATION_NAME}/euno_mcp_api_integration/g" \
-       permissions.sql.tpl > permissions.sql
-   ```
+After `terraform apply` completes, you'll find a file called `generated_agent.sql` in your module directory.
 
-   d. **Execute the SQL files** in your Snowflake account:
-   ```sql
-   -- In Snowflake worksheet or CLI
-   !source wrapper_functions.sql
-   !source agent_definition.sql
-   !source permissions.sql
-   ```
+**Option A: Using SnowSQL CLI**
+```bash
+snowsql -f generated_agent.sql
+```
 
-3. **Grant Access to Users**:
-   ```sql
-   GRANT ROLE EUNO_AGENT_USER TO USER your_username;
-   ```
+**Option B: Using Snowflake Worksheet**
+1. Open Snowflake web UI
+2. Create a new SQL worksheet
+3. Copy the contents of `generated_agent.sql`
+4. Paste and execute
 
-## Why SQL Templates?
+**Option C: Using Terraform Output**
+```bash
+terraform output -raw agent_sql_file | xargs snowsql -f
+```
 
-The Terraform Snowflake provider has limitations with complex SQL constructs like:
-- Wrapper functions with inline SQL logic
-- Agent definitions with YAML specifications
-- Complex permission grants
+### 3. Grant Agent Usage to Role
 
-These are provided as SQL templates that you can customize and apply after the Terraform infrastructure is created.
+```sql
+GRANT USAGE ON AGENT EUNO_AGENT TO ROLE EUNO_AGENT_USER;
+```
+
+### 4. Grant Role to Users (if not done in Terraform)
+
+```sql
+GRANT ROLE EUNO_AGENT_USER TO USER your_username;
+```
+
+## Why Can't Terraform Create the Agent?
+
+The Snowflake Terraform provider (as of v0.98) doesn't yet have a resource for Snowflake Intelligence Agents. This is because:
+- Agents are a very new Snowflake feature (released in late 2024)
+- The provider is still adding support for newer Snowflake features
+- Agent definitions use complex YAML specifications that don't map well to HCL
+
+**Solution**: Terraform generates the SQL for you! You just need to run one SQL file after `terraform apply`.
+
+**Good news**: Everything else (functions, permissions, roles) IS created by Terraform automatically!
+
+## What's Automated vs Manual
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Database & Schema | ✅ Automated | Created by Terraform |
+| Network Rules | ✅ Automated | Created by Terraform |
+| API Integration | ✅ Automated | Created by Terraform |
+| External Functions (11) | ✅ Automated | Created by Terraform |
+| Wrapper Functions (11) | ✅ Automated | Created by Terraform |
+| Role Creation | ✅ Automated | Created by Terraform |
+| Permissions | ✅ Automated | Granted by Terraform |
+| Agent Creation | ⚠️  Manual | Run generated SQL file |
+| Agent Usage Grant | ⚠️  Manual | Simple one-line SQL |
 
 ## Variables
 
@@ -155,6 +162,9 @@ These are provided as SQL templates that you can customize and apply after the T
 | orchestration_model | Agent orchestration model | string | "claude-sonnet-4-5" | no |
 | agent_budget_seconds | Max execution time (seconds) | number | 300 | no |
 | agent_budget_tokens | Max tokens | number | 160000 | no |
+| agent_display_name | Agent display name | string | "Euno.ai Agent GW" | no |
+| agent_avatar | Agent avatar icon | string | "CirclesAgentIcon" | no |
+| agent_color | Agent color theme | string | "orange" | no |
 | grant_role_to_users | Users to grant role to | list(string) | [] | no |
 
 ## Outputs
@@ -165,6 +175,8 @@ These are provided as SQL templates that you can customize and apply after the T
 | schema_name | Created schema name |
 | api_integration_name | Created API integration name |
 | network_rule_name | Created network rule name |
+| role_name | Created role name |
+| agent_sql_file | Path to generated agent SQL file |
 | next_steps | Instructions for completing setup |
 
 ## Using the Agent
@@ -185,16 +197,21 @@ SELECT SNOWFLAKE.CORTEX.COMPLETE(
 ## Migration from Manual Setup
 
 If you previously used the manual SQL setup (`snowflake-setup-external-functions.sql`), this module provides the same functionality with:
+- **99% Automation** - Only agent creation requires manual SQL execution
 - **Infrastructure as Code** - Version controlled and repeatable
 - **Parameterization** - Easy to customize for different environments
 - **Best practices** - Follows Terraform and Snowflake conventions
 
-## Security Considerations
+## Troubleshooting
 
-- API keys and account IDs are marked as sensitive
-- Store credentials in Terraform variables or secrets management
-- Use Terraform state encryption
-- Limit role grants to necessary users only
+### "Function already exists" errors
+If you previously ran the manual SQL setup, you may see errors about existing resources. Use `terraform import` to bring them under Terraform management, or drop them manually first.
+
+### Permission denied errors
+Ensure you're running Terraform with a Snowflake user that has `ACCOUNTADMIN` privileges.
+
+### Agent SQL file not found
+The file is generated in the same directory where you run Terraform. Check the `agent_sql_file` output for the exact path.
 
 ## Support
 

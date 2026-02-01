@@ -23,7 +23,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Generated SQL files from templates
-wrapper_functions.sql
-agent_definition.sql
-permissions.sql
+# Generated SQL files
+generated_agent.sql

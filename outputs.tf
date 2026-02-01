@@ -18,28 +18,41 @@ output "network_rule_name" {
   value       = snowflake_network_rule.euno_api_gateway.name
 }
 
+output "role_name" {
+  description = "Name of the created role for agent users"
+  value       = snowflake_role.euno_agent_user.name
+}
+
+output "agent_sql_file" {
+  description = "Path to the generated agent SQL file"
+  value       = local_file.agent_sql.filename
+}
+
 output "next_steps" {
   description = "Instructions for completing the setup"
   value       = <<-EOT
-    Terraform has created the database, schema, network rule, API integration, and external functions.
+    ✅ Terraform has successfully created:
+    - Database: ${snowflake_database.intelligence.name}
+    - Schema: ${snowflake_schema.agents.name}
+    - Network rule and API integration
+    - 11 external functions
+    - 11 wrapper functions (with type safety)
+    - Role: ${snowflake_role.euno_agent_user.name}
+    - All necessary permissions
     
-    To complete the setup, run the following SQL files in order:
-    1. wrapper_functions.sql - Creates wrapper functions for type safety
-    2. agent_definition.sql - Creates the Snowflake Agent
-    3. permissions.sql - Sets up roles and permissions
+    📋 To complete the setup:
     
-    You can generate these files from the templates using:
-    - Replace ${DATABASE_NAME} with: ${snowflake_database.intelligence.name}
-    - Replace ${SCHEMA_NAME} with: ${snowflake_schema.agents.name}
-    - Replace ${AGENT_NAME} with: ${var.agent_name}
-    - Replace ${ROLE_NAME} with: ${var.role_name}
-    - Replace ${WAREHOUSE_NAME} with: ${var.warehouse_name}
-    - Replace ${API_INTEGRATION_NAME} with: ${snowflake_api_integration.euno_mcp.name}
-    - Replace ${ORCHESTRATION_MODEL} with: ${var.orchestration_model}
-    - Replace ${BUDGET_SECONDS} with: ${var.agent_budget_seconds}
-    - Replace ${BUDGET_TOKENS} with: ${var.agent_budget_tokens}
-    - Replace ${AGENT_DISPLAY_NAME} with: ${var.agent_display_name}
-    - Replace ${AGENT_AVATAR} with: ${var.agent_avatar}
-    - Replace ${AGENT_COLOR} with: ${var.agent_color}
+    1. Apply the generated agent SQL:
+       snowsql -f ${local_file.agent_sql.filename}
+       
+       OR copy/paste the contents of ${local_file.agent_sql.filename} into a Snowflake worksheet
+    
+    2. Grant agent usage to the role (after agent is created):
+       GRANT USAGE ON AGENT ${var.agent_name} TO ROLE ${var.role_name};
+    
+    3. Grant the role to users:
+       GRANT ROLE ${var.role_name} TO USER <username>;
+    
+    🎉 Once complete, users can interact with the agent using Snowflake Cortex!
   EOT
 }

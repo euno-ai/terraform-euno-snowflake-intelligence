@@ -392,6 +392,7 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context" {
   comment                   = "Get context around a documentation chunk"
 }
 
-# Note: Wrapper functions and agent definition will be created via snowflake_procedure
-# due to limitations in the Terraform Snowflake provider with complex SQL functions
-# Users should apply the SQL from wrapper_functions.sql and agent_definition.sql after terraform apply
+# Wrapper functions, permissions, and agent SQL generation are defined in separate files:
+# - wrapper_functions.tf: SQL wrapper functions for type safety
+# - permissions.tf: Role creation and permission grants
+# - agent.tf: Agent SQL generation (requires manual application due to provider limitations)
