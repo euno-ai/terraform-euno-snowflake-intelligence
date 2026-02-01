@@ -8,13 +8,13 @@ resource "snowflake_function" "euno_instructions_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "page"
+    name = "PAGE"
     type = "NUMBER"
   }
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_INSTRUCTIONS\"(TO_VARIANT(page))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_INSTRUCTIONS\"(TO_VARIANT(PAGE))::STRING"
   comment     = "Wrapper function for euno_instructions with type safety"
 
   depends_on = [snowflake_external_function.euno_instructions]
@@ -27,27 +27,27 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "query"
+    name = "QUERY"
     type = "STRING"
   }
 
   arguments {
-    name = "reasoning"
+    name = "REASONING"
     type = "STRING"
   }
 
   arguments {
-    name = "group_by_property"
+    name = "GROUP_BY_PROPERTY"
     type = "STRING"
   }
 
   arguments {
-    name = "resource_relationship_schema"
+    name = "RESOURCE_RELATIONSHIP_SCHEMA"
     type = "STRING"
   }
 
   arguments {
-    name = "related_use_cases"
+    name = "RELATED_USE_CASES"
     type = "STRING"
   }
 
@@ -55,11 +55,11 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_COUNT_RESOURCES"(
-      TO_VARIANT(query),
-      TO_VARIANT(reasoning),
-      TO_VARIANT(group_by_property),
-      TO_VARIANT(resource_relationship_schema),
-      TO_VARIANT(CASE WHEN related_use_cases = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(related_use_cases, ',') END)
+      TO_VARIANT(QUERY),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(GROUP_BY_PROPERTY),
+      TO_VARIANT(RESOURCE_RELATIONSHIP_SCHEMA),
+      TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_count_resources with type safety"
@@ -74,12 +74,12 @@ resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "resource_uri"
+    name = "RESOURCE_URI"
     type = "STRING"
   }
 
   arguments {
-    name = "properties_to_fetch"
+    name = "PROPERTIES_TO_FETCH"
     type = "STRING"
   }
 
@@ -87,8 +87,8 @@ resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FETCH_SINGLE_RESOURCE"(
-      TO_VARIANT(resource_uri),
-      TO_VARIANT(CASE WHEN properties_to_fetch = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_fetch, ',') END)
+      TO_VARIANT(RESOURCE_URI),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_FETCH = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_FETCH, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_fetch_single_resource with type safety"
@@ -103,22 +103,22 @@ resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "resource_name"
+    name = "RESOURCE_NAME"
     type = "STRING"
   }
 
   arguments {
-    name = "reasoning"
+    name = "REASONING"
     type = "STRING"
   }
 
   arguments {
-    name = "filter_by_resource_types"
+    name = "FILTER_BY_RESOURCE_TYPES"
     type = "STRING"
   }
 
   arguments {
-    name = "properties_to_return"
+    name = "PROPERTIES_TO_RETURN"
     type = "STRING"
   }
 
@@ -126,10 +126,10 @@ resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCE_BY_NAME"(
-      TO_VARIANT(resource_name),
-      TO_VARIANT(reasoning),
-      TO_VARIANT(CASE WHEN filter_by_resource_types = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(filter_by_resource_types, ',') END),
-      TO_VARIANT(CASE WHEN properties_to_return = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_return, ',') END)
+      TO_VARIANT(RESOURCE_NAME),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(CASE WHEN FILTER_BY_RESOURCE_TYPES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(FILTER_BY_RESOURCE_TYPES, ',') END),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_RETURN = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_RETURN, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_find_resource_by_name with type safety"
@@ -144,22 +144,22 @@ resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "query_strings"
+    name = "QUERY_STRINGS"
     type = "STRING"
   }
 
   arguments {
-    name = "reasoning"
+    name = "REASONING"
     type = "STRING"
   }
 
   arguments {
-    name = "filter_by_resource_types"
+    name = "FILTER_BY_RESOURCE_TYPES"
     type = "STRING"
   }
 
   arguments {
-    name = "properties_to_return"
+    name = "PROPERTIES_TO_RETURN"
     type = "STRING"
   }
 
@@ -167,10 +167,10 @@ resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCES_FOR_TOPIC"(
-      TO_VARIANT(CASE WHEN query_strings = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(query_strings, ',') END),
-      TO_VARIANT(reasoning),
-      TO_VARIANT(CASE WHEN filter_by_resource_types = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(filter_by_resource_types, ',') END),
-      TO_VARIANT(CASE WHEN properties_to_return = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_return, ',') END)
+      TO_VARIANT(CASE WHEN QUERY_STRINGS = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(QUERY_STRINGS, ',') END),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(CASE WHEN FILTER_BY_RESOURCE_TYPES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(FILTER_BY_RESOURCE_TYPES, ',') END),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_RETURN = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_RETURN, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_find_resources_for_topic with type safety"
@@ -185,27 +185,27 @@ resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "resource_uri"
+    name = "RESOURCE_URI"
     type = "STRING"
   }
 
   arguments {
-    name = "reasoning"
+    name = "REASONING"
     type = "STRING"
   }
 
   arguments {
-    name = "properties_to_fetch"
+    name = "PROPERTIES_TO_FETCH"
     type = "STRING"
   }
 
   arguments {
-    name = "related_use_cases"
+    name = "RELATED_USE_CASES"
     type = "STRING"
   }
 
   arguments {
-    name = "filter_by_resource_types"
+    name = "FILTER_BY_RESOURCE_TYPES"
     type = "STRING"
   }
 
@@ -213,11 +213,11 @@ resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_GET_UPSTREAM_LINEAGE"(
-      TO_VARIANT(resource_uri),
-      TO_VARIANT(reasoning),
-      TO_VARIANT(CASE WHEN properties_to_fetch = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_fetch, ',') END),
-      TO_VARIANT(CASE WHEN related_use_cases = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(related_use_cases, ',') END),
-      TO_VARIANT(CASE WHEN filter_by_resource_types = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(filter_by_resource_types, ',') END)
+      TO_VARIANT(RESOURCE_URI),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_FETCH = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_FETCH, ',') END),
+      TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END),
+      TO_VARIANT(CASE WHEN FILTER_BY_RESOURCE_TYPES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(FILTER_BY_RESOURCE_TYPES, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_get_upstream_lineage with type safety"
@@ -232,13 +232,13 @@ resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "uri"
+    name = "URI"
     type = "STRING"
   }
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_RESOURCE_IMPACT_ANALYSIS\"(TO_VARIANT(uri))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_RESOURCE_IMPACT_ANALYSIS\"(TO_VARIANT(URI))::STRING"
   comment     = "Wrapper function for euno_resource_impact_analysis with type safety"
 
   depends_on = [snowflake_external_function.euno_resource_impact_analysis]
@@ -251,37 +251,37 @@ resource "snowflake_function" "euno_search_resources_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "query"
+    name = "QUERY"
     type = "STRING"
   }
 
   arguments {
-    name = "reasoning"
+    name = "REASONING"
     type = "STRING"
   }
 
   arguments {
-    name = "resource_relationship_schema"
+    name = "RESOURCE_RELATIONSHIP_SCHEMA"
     type = "STRING"
   }
 
   arguments {
-    name = "related_use_cases"
+    name = "RELATED_USE_CASES"
     type = "STRING"
   }
 
   arguments {
-    name = "order_by_property"
+    name = "ORDER_BY_PROPERTY"
     type = "STRING"
   }
 
   arguments {
-    name = "order_direction"
+    name = "ORDER_DIRECTION"
     type = "STRING"
   }
 
   arguments {
-    name = "properties_to_return"
+    name = "PROPERTIES_TO_RETURN"
     type = "STRING"
   }
 
@@ -289,13 +289,13 @@ resource "snowflake_function" "euno_search_resources_wrapper" {
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_SEARCH_RESOURCES"(
-      TO_VARIANT(query),
-      TO_VARIANT(reasoning),
-      TO_VARIANT(resource_relationship_schema),
-      TO_VARIANT(CASE WHEN related_use_cases = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(related_use_cases, ',') END),
-      TO_VARIANT(order_by_property),
-      TO_VARIANT(order_direction),
-      TO_VARIANT(CASE WHEN properties_to_return = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(properties_to_return, ',') END)
+      TO_VARIANT(QUERY),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(RESOURCE_RELATIONSHIP_SCHEMA),
+      TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END),
+      TO_VARIANT(ORDER_BY_PROPERTY),
+      TO_VARIANT(ORDER_DIRECTION),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_RETURN = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_RETURN, ',') END)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_search_resources with type safety"
@@ -310,13 +310,13 @@ resource "snowflake_function" "euno_documentation_search_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "query"
+    name = "QUERY"
     type = "STRING"
   }
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_SEARCH\"(TO_VARIANT(query))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_SEARCH\"(TO_VARIANT(QUERY))::STRING"
   comment     = "Wrapper function for euno_documentation_search with type safety"
 
   depends_on = [snowflake_external_function.euno_documentation_search]
@@ -329,13 +329,13 @@ resource "snowflake_function" "euno_documentation_get_full_document_wrapper" {
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "url"
+    name = "URL"
     type = "STRING"
   }
 
   return_type = "STRING"
   language    = "SQL"
-  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_GET_FULL_DOCUMENT\"(TO_VARIANT(url))::STRING"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_GET_FULL_DOCUMENT\"(TO_VARIANT(URL))::STRING"
   comment     = "Wrapper function for euno_documentation_get_full_document with type safety"
 
   depends_on = [snowflake_external_function.euno_documentation_get_full_document]
@@ -348,12 +348,12 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context_wrappe
   schema   = snowflake_schema.agents.name
 
   arguments {
-    name = "chunk_id"
+    name = "CHUNK_ID"
     type = "STRING"
   }
 
   arguments {
-    name = "window_size"
+    name = "WINDOW_SIZE"
     type = "NUMBER"
   }
 
@@ -361,8 +361,8 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context_wrappe
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_DOCUMENTATION_GET_SURROUNDING_CONTEXT"(
-      TO_VARIANT(chunk_id),
-      TO_VARIANT(window_size)
+      TO_VARIANT(CHUNK_ID),
+      TO_VARIANT(WINDOW_SIZE)
     )::STRING
   SQL
   comment     = "Wrapper function for euno_documentation_get_surrounding_context with type safety"
