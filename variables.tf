@@ -23,9 +23,8 @@ variable "schema_name" {
 }
 
 variable "warehouse_name" {
-  description = "Snowflake warehouse name for executing agent functions"
+  description = "Snowflake warehouse name for executing agent functions (required)"
   type        = string
-  default     = "CORE"
 }
 
 variable "agent_name" {

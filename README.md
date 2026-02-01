@@ -152,7 +152,7 @@ This is the smartest workaround until Snowflake adds native support!
 | euno_account_id | Euno account ID | string | - | yes |
 | database_name | Database name | string | "SNOWFLAKE_INTELLIGENCE" | no |
 | schema_name | Schema name | string | "AGENTS" | no |
-| warehouse_name | Warehouse name | string | "CORE" | no |
+| warehouse_name | Warehouse name | string | n/a | **yes** |
 | agent_name | Agent name | string | "EUNO_AGENT" | no |
 | role_name | Role name | string | "EUNO_AGENT_USER" | no |
 | orchestration_model | Agent orchestration model | string | "claude-sonnet-4-5" | no |
