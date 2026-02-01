@@ -155,7 +155,6 @@ This is the smartest workaround until Snowflake adds native support!
 | warehouse_name | Warehouse name | string | "CORE" | no |
 | agent_name | Agent name | string | "EUNO_AGENT" | no |
 | role_name | Role name | string | "EUNO_AGENT_USER" | no |
-| api_gateway_host | API Gateway host | string | "euno-mcp-gateway-dev-7a33ocyx.uc.gateway.dev" | no |
 | orchestration_model | Agent orchestration model | string | "claude-sonnet-4-5" | no |
 | agent_budget_seconds | Max execution time (seconds) | number | 300 | no |
 | agent_budget_tokens | Max tokens | number | 160000 | no |
