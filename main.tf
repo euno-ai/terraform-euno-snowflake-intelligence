@@ -1,14 +1,3 @@
-terraform {
-  required_version = ">= 1.5.0"
-
-  required_providers {
-    snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.98"
-    }
-  }
-}
-
 # Use ACCOUNTADMIN role for setup
 resource "snowflake_database" "intelligence" {
   name    = var.database_name
@@ -51,344 +40,432 @@ locals {
 }
 
 # External Functions
-resource "snowflake_function" "euno_instructions" {
+resource "snowflake_external_function" "euno_instructions" {
   name     = "euno_instructions"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "page"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/euno_instructions"
-  headers                   = local.api_headers
-  comment                   = "Get detailed instructions on using Euno MCP server"
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
+  comment = "Get detailed instructions on using Euno MCP server"
 }
 
-resource "snowflake_function" "euno_count_resources" {
+resource "snowflake_external_function" "euno_count_resources" {
   name     = "euno_count_resources"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "query"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "reasoning"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "group_by_property"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "resource_relationship_schema"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "related_use_cases"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/count_resources"
-  headers                   = local.api_headers
-  comment                   = "Count resources matching a query with optional grouping"
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
+  comment = "Count resources matching a query with optional grouping"
 }
 
-resource "snowflake_function" "euno_fetch_single_resource" {
+resource "snowflake_external_function" "euno_fetch_single_resource" {
   name     = "euno_fetch_single_resource"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "resource_uri"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "properties_to_fetch"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/fetch_single_resource"
-  headers                   = local.api_headers
-  comment                   = "Retrieve a single resource by URI"
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
+  comment = "Retrieve a single resource by URI"
 }
 
-resource "snowflake_function" "euno_find_resource_by_name" {
+resource "snowflake_external_function" "euno_find_resource_by_name" {
   name     = "euno_find_resource_by_name"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "resource_name"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "reasoning"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "filter_by_resource_types"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "properties_to_return"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/find_resource_by_name"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Find resources by name using similarity matching"
 }
 
-resource "snowflake_function" "euno_find_resources_for_topic" {
+resource "snowflake_external_function" "euno_find_resources_for_topic" {
   name     = "euno_find_resources_for_topic"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "query_strings"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "reasoning"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "filter_by_resource_types"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "properties_to_return"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/find_resources_for_topic"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Find resources related to a topic using semantic search"
 }
 
-resource "snowflake_function" "euno_get_upstream_lineage" {
+resource "snowflake_external_function" "euno_get_upstream_lineage" {
   name     = "euno_get_upstream_lineage"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "resource_uri"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "reasoning"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "properties_to_fetch"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "related_use_cases"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "filter_by_resource_types"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/get_upstream_lineage"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Get upstream lineage/dependencies for a resource"
 }
 
-resource "snowflake_function" "euno_resource_impact_analysis" {
+resource "snowflake_external_function" "euno_resource_impact_analysis" {
   name     = "euno_resource_impact_analysis"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "uri"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/resource_impact_analysis"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Analyze downstream impact of changes to a resource"
 }
 
-resource "snowflake_function" "euno_search_resources" {
+resource "snowflake_external_function" "euno_search_resources" {
   name     = "euno_search_resources"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "query"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "reasoning"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "resource_relationship_schema"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "related_use_cases"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "order_by_property"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "order_direction"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "properties_to_return"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/search_resources"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Advanced search with EQL or natural language queries"
 }
 
-resource "snowflake_function" "euno_documentation_search" {
+resource "snowflake_external_function" "euno_documentation_search" {
   name     = "euno_documentation_search"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "query"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/documentation_search"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Search Euno documentation"
 }
 
-resource "snowflake_function" "euno_documentation_get_full_document" {
+resource "snowflake_external_function" "euno_documentation_get_full_document" {
   name     = "euno_documentation_get_full_document"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "url"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/documentation_get_full_document"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Retrieve full documentation by URL"
 }
 
-resource "snowflake_function" "euno_documentation_get_surrounding_context" {
+resource "snowflake_external_function" "euno_documentation_get_surrounding_context" {
   name     = "euno_documentation_get_surrounding_context"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
-  arguments {
+  arg {
     name = "chunk_id"
     type = "VARIANT"
   }
 
-  arguments {
+  arg {
     name = "window_size"
     type = "VARIANT"
   }
 
   return_type               = "VARIANT"
-  language                  = "EXTERNAL"
-  is_secure                 = false
-  null_input_behavior       = "CALLED_ON_NULL_INPUT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
   url_of_proxy_and_resource = "${local.api_base_url}/documentation_get_surrounding_context"
-  headers                   = local.api_headers
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
   comment                   = "Get context around a documentation chunk"
 }
 

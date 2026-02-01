@@ -8,21 +8,23 @@ resource "snowflake_role" "euno_agent_user" {
 }
 
 # Grant the role to ACCOUNTADMIN
-resource "snowflake_role_grants" "euno_agent_user_to_accountadmin" {
-  role_name = snowflake_role.euno_agent_user.name
-  roles     = ["ACCOUNTADMIN"]
+resource "snowflake_grant_account_role" "euno_agent_user_to_accountadmin" {
+  role_name        = snowflake_role.euno_agent_user.name
+  parent_role_name = "ACCOUNTADMIN"
 }
 
 # Grant CORTEX_USER database role to the agent user role and ACCOUNTADMIN
-resource "snowflake_grant_database_role" "cortex_to_euno_role" {
-  database_role_name = "SNOWFLAKE.CORTEX_USER"
-  parent_role_name   = snowflake_role.euno_agent_user.name
-}
+# Commented out due to provider bug - will grant manually if needed
+# resource "snowflake_grant_database_role" "cortex_to_euno_role" {
+#   database_role_name = "SNOWFLAKE.CORTEX_USER"
+#   parent_role_name   = snowflake_role.euno_agent_user.name
+# }
 
-resource "snowflake_grant_database_role" "cortex_to_accountadmin" {
-  database_role_name = "SNOWFLAKE.CORTEX_USER"
-  parent_role_name   = "ACCOUNTADMIN"
-}
+# Commented out due to provider bug - ACCOUNTADMIN already has access
+# resource "snowflake_grant_database_role" "cortex_to_accountadmin" {
+#   database_role_name = "SNOWFLAKE.CORTEX_USER"
+#   parent_role_name   = "ACCOUNTADMIN"
+# }
 
 # Grant database usage
 resource "snowflake_grant_privileges_to_account_role" "database_usage" {
@@ -70,7 +72,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_euno_in
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_instructions.name}(VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_instructions.name}(VARIANT)"
   }
 }
 
@@ -79,7 +81,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_count_r
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_count_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_count_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -88,7 +90,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_fetch_s
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_fetch_single_resource.name}(VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_fetch_single_resource.name}(VARIANT, VARIANT)"
   }
 }
 
@@ -97,7 +99,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_find_re
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_find_resource_by_name.name}(VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_find_resource_by_name.name}(VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -106,7 +108,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_find_re
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_find_resources_for_topic.name}(VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_find_resources_for_topic.name}(VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -115,7 +117,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_get_ups
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_get_upstream_lineage.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_get_upstream_lineage.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -124,7 +126,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_resourc
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_resource_impact_analysis.name}(VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_resource_impact_analysis.name}(VARIANT)"
   }
 }
 
@@ -133,7 +135,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_search_
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_search_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_search_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -142,7 +144,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_documen
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_documentation_search.name}(VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_documentation_search.name}(VARIANT)"
   }
 }
 
@@ -151,7 +153,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_documen
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_documentation_get_full_document.name}(VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_documentation_get_full_document.name}(VARIANT)"
   }
 }
 
@@ -160,7 +162,7 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_documen
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_documentation_get_surrounding_context.name}(VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_documentation_get_surrounding_context.name}(VARIANT, VARIANT)"
   }
 }
 

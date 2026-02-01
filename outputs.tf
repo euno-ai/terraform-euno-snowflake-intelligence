@@ -25,7 +25,7 @@ output "role_name" {
 
 output "create_agent_procedure" {
   description = "Name of the procedure to call to create the agent"
-  value       = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure.create_euno_agent.name}()"
+  value       = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure_javascript.create_euno_agent.name}()"
 }
 
 output "next_steps" {
@@ -44,7 +44,7 @@ output "next_steps" {
     📋 To complete the setup (2 simple SQL commands):
     
     1. Create the agent by calling the procedure:
-       CALL ${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure.create_euno_agent.name}();
+       CALL ${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_procedure_javascript.create_euno_agent.name}();
     
     2. Grant agent usage to the role:
        GRANT USAGE ON AGENT ${var.agent_name} TO ROLE ${var.role_name};

@@ -2,16 +2,15 @@
 # This creates a JavaScript procedure that users call to create the agent
 # This is cleaner than running a SQL file!
 
-resource "snowflake_procedure" "create_euno_agent" {
+resource "snowflake_procedure_javascript" "create_euno_agent" {
   name     = "create_euno_agent"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
-  
+
   return_type = "STRING"
-  language    = "JAVASCRIPT"
-  
+
   # JavaScript allows us to use backticks, avoiding $$ conflicts!
-  statement = <<-JS
+  procedure_definition = <<-JS
     var agentSQL = `CREATE OR REPLACE AGENT ${var.agent_name}
   COMMENT = 'Euno.ai Data Pipeline Assistant Agent - using external functions with type-safe wrapper layer'
   PROFILE = '{
@@ -20,7 +19,7 @@ resource "snowflake_procedure" "create_euno_agent" {
     "color": "${var.agent_color}"
   }'
   FROM SPECIFICATION
-  ${'$'}${'$'}
+  \$\$
 models:
   orchestration: ${var.orchestration_model}
 
@@ -341,7 +340,7 @@ tool_resources:
     execution_environment:
       type: "warehouse"
       warehouse: "${var.warehouse_name}"
-  ${'$'}${'$'}`;
+  \$\$`;
 
     try {
       var stmt = snowflake.createStatement({sqlText: agentSQL});
