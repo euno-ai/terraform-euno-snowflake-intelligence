@@ -76,12 +76,30 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_euno_in
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "external_function_count_resources" {
+resource "snowflake_grant_privileges_to_account_role" "external_function_generate_eql_query" {
   account_role_name = snowflake_role.euno_agent_user.name
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_count_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_generate_eql_query.name}(VARIANT)"
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "external_function_execute_eql_query" {
+  account_role_name = snowflake_role.euno_agent_user.name
+  privileges        = ["USAGE"]
+  on_schema_object {
+    object_type = "FUNCTION"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_execute_eql_query.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "external_function_execute_eql_count" {
+  account_role_name = snowflake_role.euno_agent_user.name
+  privileges        = ["USAGE"]
+  on_schema_object {
+    object_type = "FUNCTION"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_execute_eql_count.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
   }
 }
 
@@ -130,14 +148,6 @@ resource "snowflake_grant_privileges_to_account_role" "external_function_resourc
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "external_function_search_resources" {
-  account_role_name = snowflake_role.euno_agent_user.name
-  privileges        = ["USAGE"]
-  on_schema_object {
-    object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_external_function.euno_search_resources.name}(VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT, VARIANT)"
-  }
-}
 
 resource "snowflake_grant_privileges_to_account_role" "external_function_documentation_search" {
   account_role_name = snowflake_role.euno_agent_user.name
@@ -176,12 +186,30 @@ resource "snowflake_grant_privileges_to_account_role" "wrapper_function_instruct
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "wrapper_function_count_resources" {
+resource "snowflake_grant_privileges_to_account_role" "wrapper_function_generate_eql_query" {
   account_role_name = snowflake_role.euno_agent_user.name
   privileges        = ["USAGE"]
   on_schema_object {
     object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_count_resources_wrapper.name}(STRING, STRING, STRING, STRING, STRING)"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_generate_eql_query_wrapper.name}(VARCHAR)"
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "wrapper_function_execute_eql_query" {
+  account_role_name = snowflake_role.euno_agent_user.name
+  privileges        = ["USAGE"]
+  on_schema_object {
+    object_type = "FUNCTION"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_execute_eql_query_wrapper.name}(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, NUMBER, NUMBER)"
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "wrapper_function_execute_eql_count" {
+  account_role_name = snowflake_role.euno_agent_user.name
+  privileges        = ["USAGE"]
+  on_schema_object {
+    object_type = "FUNCTION"
+    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_execute_eql_count_wrapper.name}(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR)"
   }
 }
 
@@ -230,14 +258,6 @@ resource "snowflake_grant_privileges_to_account_role" "wrapper_function_resource
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "wrapper_function_search_resources" {
-  account_role_name = snowflake_role.euno_agent_user.name
-  privileges        = ["USAGE"]
-  on_schema_object {
-    object_type = "FUNCTION"
-    object_name = "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.${snowflake_function.euno_search_resources_wrapper.name}(STRING, STRING, STRING, STRING, STRING, STRING, STRING)"
-  }
-}
 
 resource "snowflake_grant_privileges_to_account_role" "wrapper_function_documentation_search" {
   account_role_name = snowflake_role.euno_agent_user.name

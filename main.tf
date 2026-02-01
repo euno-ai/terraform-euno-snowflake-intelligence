@@ -32,7 +32,7 @@ resource "snowflake_api_integration" "euno_mcp" {
 }
 
 locals {
-  api_base_url = "${var.api_gateway_audience}/mcp/endpoints"
+  api_base_url = "${var.api_gateway_audience}/v2/snowflake_batch"
   api_headers = {
     "api-key"    = var.euno_api_key
     "account-id" = var.euno_account_id
@@ -69,13 +69,113 @@ resource "snowflake_external_function" "euno_instructions" {
   comment = "Get detailed instructions on using Euno MCP server"
 }
 
-resource "snowflake_external_function" "euno_count_resources" {
-  name     = "EUNO_COUNT_RESOURCES"
+# New v2 API functions
+
+resource "snowflake_external_function" "euno_generate_eql_query" {
+  name     = "EUNO_GENERATE_EQL_QUERY"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
   arg {
     name = "query"
+    type = "VARIANT"
+  }
+
+  return_type               = "VARIANT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
+  return_behavior           = "VOLATILE"
+  api_integration           = snowflake_api_integration.euno_mcp.name
+  url_of_proxy_and_resource = "${local.api_base_url}/generate_eql_query"
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
+  comment = "Generate an EQL query from natural language"
+}
+
+resource "snowflake_external_function" "euno_execute_eql_query" {
+  name     = "EUNO_EXECUTE_EQL_QUERY"
+  database = snowflake_database.intelligence.name
+  schema   = snowflake_schema.agents.name
+
+  arg {
+    name = "eql_query"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "reasoning"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "resource_relationship_schema"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "related_use_cases"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "order_by_property"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "order_direction"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "properties_to_return"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "page"
+    type = "VARIANT"
+  }
+
+  arg {
+    name = "page_size"
+    type = "VARIANT"
+  }
+
+  return_type               = "VARIANT"
+  null_input_behavior       = "CALLED ON NULL INPUT"
+  return_behavior           = "VOLATILE"
+  api_integration           = snowflake_api_integration.euno_mcp.name
+  url_of_proxy_and_resource = "${local.api_base_url}/execute_eql_query"
+
+  header {
+    name  = "api-key"
+    value = var.euno_api_key
+  }
+
+  header {
+    name  = "account-id"
+    value = var.euno_account_id
+  }
+
+  comment = "Search resources using an EQL query"
+}
+
+resource "snowflake_external_function" "euno_execute_eql_count" {
+  name     = "EUNO_EXECUTE_EQL_COUNT"
+  database = snowflake_database.intelligence.name
+  schema   = snowflake_schema.agents.name
+
+  arg {
+    name = "eql_query"
     type = "VARIANT"
   }
 
@@ -103,7 +203,7 @@ resource "snowflake_external_function" "euno_count_resources" {
   null_input_behavior       = "CALLED ON NULL INPUT"
   return_behavior           = "VOLATILE"
   api_integration           = snowflake_api_integration.euno_mcp.name
-  url_of_proxy_and_resource = "${local.api_base_url}/count_resources"
+  url_of_proxy_and_resource = "${local.api_base_url}/execute_eql_count"
 
   header {
     name  = "api-key"
@@ -115,7 +215,7 @@ resource "snowflake_external_function" "euno_count_resources" {
     value = var.euno_account_id
   }
 
-  comment = "Count resources matching a query with optional grouping"
+  comment = "Count resources using an EQL query with optional grouping"
 }
 
 resource "snowflake_external_function" "euno_fetch_single_resource" {
@@ -318,64 +418,6 @@ resource "snowflake_external_function" "euno_resource_impact_analysis" {
   comment                   = "Analyze downstream impact of changes to a resource"
 }
 
-resource "snowflake_external_function" "euno_search_resources" {
-  name     = "EUNO_SEARCH_RESOURCES"
-  database = snowflake_database.intelligence.name
-  schema   = snowflake_schema.agents.name
-
-  arg {
-    name = "query"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "reasoning"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "resource_relationship_schema"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "related_use_cases"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "order_by_property"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "order_direction"
-    type = "VARIANT"
-  }
-
-  arg {
-    name = "properties_to_return"
-    type = "VARIANT"
-  }
-
-  return_type               = "VARIANT"
-  null_input_behavior       = "CALLED ON NULL INPUT"
-  return_behavior           = "VOLATILE"
-  api_integration           = snowflake_api_integration.euno_mcp.name
-  url_of_proxy_and_resource = "${local.api_base_url}/search_resources"
-
-  header {
-    name  = "api-key"
-    value = var.euno_api_key
-  }
-
-  header {
-    name  = "account-id"
-    value = var.euno_account_id
-  }
-
-  comment                   = "Advanced search with EQL or natural language queries"
-}
 
 resource "snowflake_external_function" "euno_documentation_search" {
   name     = "EUNO_DOCUMENTATION_SEARCH"

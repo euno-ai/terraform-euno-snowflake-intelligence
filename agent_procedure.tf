@@ -39,13 +39,14 @@ instructions:
     ALWAYS start by calling the tool 'euno_instructions' to get updated guidelines on how to work with Euno, which resource kinds and properties exists, how to perform certain tasks etc. It is VERY IMPORTANT you do not skip this step and never use any of the tools below before calling euno_instructions.
     START FROM PAGE 1 and read through ALL THE PAGES of the instructions returned by euno_instructions before proceeding to use any other tool.
     Then use Euno tools, being strategic about which tool to use:
-    - Use 'search_resources' for general resource searches with natural language or EQL queries
+    - Use 'generate_eql_query' to convert natural language to EQL queries
+    - Use 'execute_eql_query' to run EQL queries and get resource results
+    - Use 'execute_eql_count' for aggregations or counts of resources
     - Use 'find_resource_by_name' for finding resources by their name
     - Use 'find_resources_for_topic' for semantic searches across resource descriptions
     - Use 'get_upstream_lineage' to trace dependencies and data flow
     - Use 'resource_impact_analysis' to understand downstream effects of changes
     - Use 'fetch_single_resource' when you already have a URI and need specific properties
-    - Use 'count_resources' when you need aggregations or counts
     - Use documentation tools to learn about Euno features and capabilities
 
     REMEMBER TO ALWAYS start by calling 'euno_instructions' FULLY to understand the full capabilities and guidelines.
@@ -79,14 +80,26 @@ tools:
 
   - tool_spec:
       type: "generic"
-      name: "euno_search_resources"
-      description: "Search for data pipeline resources using natural language or EQL queries. Supports filtering, sorting, and property selection. Returns matching resources with requested properties."
+      name: "euno_generate_eql_query"
+      description: "Generate an EQL (Euno Query Language) query from a natural language description. Use this first to convert user requests into EQL, then use execute_eql_query or execute_eql_count to run the query."
       input_schema:
         type: "object"
         properties:
           query:
             type: "string"
             description: "Natural language description of what resources to find (e.g. 'tables in analytics schema', 'dashboards with no usage'). Use precise, specific descriptions."
+        required: ["query"]
+
+  - tool_spec:
+      type: "generic"
+      name: "euno_execute_eql_query"
+      description: "Search for data pipeline resources using an EQL query. Use generate_eql_query first to convert natural language to EQL, then use this tool to execute the query and get results."
+      input_schema:
+        type: "object"
+        properties:
+          eql_query:
+            type: "string"
+            description: "A valid EQL query string. Use generate_eql_query to create this from natural language."
           reasoning:
             type: "string"
             description: "Explain why you're searching and what resource types/properties you expect to find"
@@ -105,18 +118,24 @@ tools:
           properties_to_return:
             type: "string"
             description: "Comma-separated list of property names to include in results (e.g. 'name,owner,description'). uri is always included. Leave empty for defaults."
-        required: ["query", "reasoning", "resource_relationship_schema", "related_use_cases", "order_by_property", "order_direction", "properties_to_return"]
+          page:
+            type: "number"
+            description: "Page number for pagination (starting from 1). Default is 1."
+          page_size:
+            type: "number"
+            description: "Number of results per page. Default is 20."
+        required: ["eql_query", "reasoning", "resource_relationship_schema", "related_use_cases", "order_by_property", "order_direction", "properties_to_return", "page", "page_size"]
 
   - tool_spec:
       type: "generic"
-      name: "euno_count_resources"
-      description: "Count resources matching a query, optionally grouped by a property. Useful for understanding data pipeline composition and resource distribution."
+      name: "euno_execute_eql_count"
+      description: "Count resources matching an EQL query, optionally grouped by a property. Use generate_eql_query first to convert natural language to EQL, then use this tool to count results."
       input_schema:
         type: "object"
         properties:
-          query:
+          eql_query:
             type: "string"
-            description: "Natural language description of resources to count"
+            description: "A valid EQL query string. Use generate_eql_query to create this from natural language."
           reasoning:
             type: "string"
             description: "Explain what you're counting and why"
@@ -129,7 +148,7 @@ tools:
           related_use_cases:
             type: "string"
             description: "Comma-separated list of related use case identifiers (e.g. 'TRACE_LINEAGE,IMPACT_ANALYSIS'). Leave empty if not applicable."
-        required: ["query", "reasoning", "group_by_property", "resource_relationship_schema", "related_use_cases"]
+        required: ["eql_query", "reasoning", "group_by_property", "resource_relationship_schema", "related_use_cases"]
 
   - tool_spec:
       type: "generic"
@@ -271,16 +290,23 @@ tool_resources:
       type: "warehouse"
       warehouse: "${var.warehouse_name}"
 
-  euno_search_resources:
+  euno_generate_eql_query:
     type: "function"
-    identifier: "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.EUNO_SEARCH_RESOURCES_WRAPPER"
+    identifier: "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.EUNO_GENERATE_EQL_QUERY_WRAPPER"
     execution_environment:
       type: "warehouse"
       warehouse: "${var.warehouse_name}"
 
-  euno_count_resources:
+  euno_execute_eql_query:
     type: "function"
-    identifier: "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.EUNO_COUNT_RESOURCES_WRAPPER"
+    identifier: "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.EUNO_EXECUTE_EQL_QUERY_WRAPPER"
+    execution_environment:
+      type: "warehouse"
+      warehouse: "${var.warehouse_name}"
+
+  euno_execute_eql_count:
+    type: "function"
+    identifier: "${snowflake_database.intelligence.name}.${snowflake_schema.agents.name}.EUNO_EXECUTE_EQL_COUNT_WRAPPER"
     execution_environment:
       type: "warehouse"
       warehouse: "${var.warehouse_name}"
@@ -355,13 +381,14 @@ tool_resources:
   
   depends_on = [
     snowflake_function.euno_instructions_wrapper,
-    snowflake_function.euno_count_resources_wrapper,
+    snowflake_function.euno_generate_eql_query_wrapper,
+    snowflake_function.euno_execute_eql_query_wrapper,
+    snowflake_function.euno_execute_eql_count_wrapper,
     snowflake_function.euno_fetch_single_resource_wrapper,
     snowflake_function.euno_find_resource_by_name_wrapper,
     snowflake_function.euno_find_resources_for_topic_wrapper,
     snowflake_function.euno_get_upstream_lineage_wrapper,
     snowflake_function.euno_resource_impact_analysis_wrapper,
-    snowflake_function.euno_search_resources_wrapper,
     snowflake_function.euno_documentation_search_wrapper,
     snowflake_function.euno_documentation_get_full_document_wrapper,
     snowflake_function.euno_documentation_get_surrounding_context_wrapper,

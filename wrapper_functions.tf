@@ -20,14 +20,104 @@ resource "snowflake_function" "euno_instructions_wrapper" {
   depends_on = [snowflake_external_function.euno_instructions]
 }
 
-# 2. COUNT_RESOURCES: Count resources matching a query with optional grouping
-resource "snowflake_function" "euno_count_resources_wrapper" {
-  name     = "EUNO_COUNT_RESOURCES_WRAPPER"
+# 2. GENERATE_EQL_QUERY: Generate an EQL query from natural language
+resource "snowflake_function" "euno_generate_eql_query_wrapper" {
+  name     = "EUNO_GENERATE_EQL_QUERY_WRAPPER"
   database = snowflake_database.intelligence.name
   schema   = snowflake_schema.agents.name
 
   arguments {
     name = "QUERY"
+    type = "VARCHAR"
+  }
+
+  return_type = "VARCHAR"
+  language    = "SQL"
+  statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_GENERATE_EQL_QUERY\"(TO_VARIANT(QUERY))::STRING"
+  comment     = "Wrapper function for euno_generate_eql_query with type safety"
+
+  depends_on = [snowflake_external_function.euno_generate_eql_query]
+}
+
+# 2b. EXECUTE_EQL_QUERY: Search resources using an EQL query
+resource "snowflake_function" "euno_execute_eql_query_wrapper" {
+  name     = "EUNO_EXECUTE_EQL_QUERY_WRAPPER"
+  database = snowflake_database.intelligence.name
+  schema   = snowflake_schema.agents.name
+
+  arguments {
+    name = "EQL_QUERY"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "REASONING"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "RESOURCE_RELATIONSHIP_SCHEMA"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "RELATED_USE_CASES"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "ORDER_BY_PROPERTY"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "ORDER_DIRECTION"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "PROPERTIES_TO_RETURN"
+    type = "VARCHAR"
+  }
+
+  arguments {
+    name = "PAGE"
+    type = "NUMBER"
+  }
+
+  arguments {
+    name = "PAGE_SIZE"
+    type = "NUMBER"
+  }
+
+  return_type = "VARCHAR"
+  language    = "SQL"
+  statement   = <<-SQL
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_EXECUTE_EQL_QUERY"(
+      TO_VARIANT(EQL_QUERY),
+      TO_VARIANT(REASONING),
+      TO_VARIANT(RESOURCE_RELATIONSHIP_SCHEMA),
+      TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END),
+      TO_VARIANT(ORDER_BY_PROPERTY),
+      TO_VARIANT(ORDER_DIRECTION),
+      TO_VARIANT(CASE WHEN PROPERTIES_TO_RETURN = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_RETURN, ',') END),
+      TO_VARIANT(PAGE),
+      TO_VARIANT(PAGE_SIZE)
+    )::STRING
+  SQL
+  comment     = "Wrapper function for euno_execute_eql_query with type safety"
+
+  depends_on = [snowflake_external_function.euno_execute_eql_query]
+}
+
+# 2c. EXECUTE_EQL_COUNT: Count resources using an EQL query
+resource "snowflake_function" "euno_execute_eql_count_wrapper" {
+  name     = "EUNO_EXECUTE_EQL_COUNT_WRAPPER"
+  database = snowflake_database.intelligence.name
+  schema   = snowflake_schema.agents.name
+
+  arguments {
+    name = "EQL_QUERY"
     type = "VARCHAR"
   }
 
@@ -54,17 +144,17 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
   return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_COUNT_RESOURCES"(
-      TO_VARIANT(QUERY),
+    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_EXECUTE_EQL_COUNT"(
+      TO_VARIANT(EQL_QUERY),
       TO_VARIANT(REASONING),
       TO_VARIANT(GROUP_BY_PROPERTY),
       TO_VARIANT(RESOURCE_RELATIONSHIP_SCHEMA),
       TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END)
     )::STRING
   SQL
-  comment     = "Wrapper function for euno_count_resources with type safety"
+  comment     = "Wrapper function for euno_execute_eql_count with type safety"
 
-  depends_on = [snowflake_external_function.euno_count_resources]
+  depends_on = [snowflake_external_function.euno_execute_eql_count]
 }
 
 # 3. FETCH_SINGLE_RESOURCE: Retrieve a single resource by URI
@@ -244,66 +334,7 @@ resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
   depends_on = [snowflake_external_function.euno_resource_impact_analysis]
 }
 
-# 8. SEARCH_RESOURCES: Advanced search with EQL or natural language queries
-resource "snowflake_function" "euno_search_resources_wrapper" {
-  name     = "EUNO_SEARCH_RESOURCES_WRAPPER"
-  database = snowflake_database.intelligence.name
-  schema   = snowflake_schema.agents.name
-
-  arguments {
-    name = "QUERY"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "REASONING"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "RESOURCE_RELATIONSHIP_SCHEMA"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "RELATED_USE_CASES"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "ORDER_BY_PROPERTY"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "ORDER_DIRECTION"
-    type = "VARCHAR"
-  }
-
-  arguments {
-    name = "PROPERTIES_TO_RETURN"
-    type = "VARCHAR"
-  }
-
-  return_type = "VARCHAR"
-  language    = "SQL"
-  statement   = <<-SQL
-    SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_SEARCH_RESOURCES"(
-      TO_VARIANT(QUERY),
-      TO_VARIANT(REASONING),
-      TO_VARIANT(RESOURCE_RELATIONSHIP_SCHEMA),
-      TO_VARIANT(CASE WHEN RELATED_USE_CASES = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(RELATED_USE_CASES, ',') END),
-      TO_VARIANT(ORDER_BY_PROPERTY),
-      TO_VARIANT(ORDER_DIRECTION),
-      TO_VARIANT(CASE WHEN PROPERTIES_TO_RETURN = '' THEN ARRAY_CONSTRUCT() ELSE SPLIT(PROPERTIES_TO_RETURN, ',') END)
-    )::STRING
-  SQL
-  comment     = "Wrapper function for euno_search_resources with type safety"
-
-  depends_on = [snowflake_external_function.euno_search_resources]
-}
-
-# 9. DOCUMENTATION_SEARCH: Search Euno documentation
+# 8. DOCUMENTATION_SEARCH: Search Euno documentation
 resource "snowflake_function" "euno_documentation_search_wrapper" {
   name     = "EUNO_DOCUMENTATION_SEARCH_WRAPPER"
   database = snowflake_database.intelligence.name

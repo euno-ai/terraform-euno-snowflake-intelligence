@@ -17,7 +17,7 @@ This module creates:
 1. **Database and Schema** - `SNOWFLAKE_INTELLIGENCE.AGENTS` by default
 2. **Network Rule** - Allows egress to Euno API Gateway
 3. **API Integration** - Configures Google API Gateway authentication
-4. **External Functions** - 11 functions for interacting with Euno API
+4. **External Functions** - 12 functions for interacting with Euno v2 API
 5. **Wrapper Functions** - Type-safe SQL wrappers (created by Terraform!)
 6. **Role and Permissions** - Complete access control setup
 7. **Agent SQL File** - Generated SQL for creating the Snowflake Agent
@@ -85,8 +85,8 @@ terraform apply
 Terraform will create:
 - ✅ Database and schema
 - ✅ Network rule and API integration
-- ✅ 11 external functions
-- ✅ 11 wrapper functions (with type safety!)
+- ✅ 12 external functions (v2 API)
+- ✅ 12 wrapper functions (with type safety!)
 - ✅ Role and all permissions
 - ✅ **Agent creation procedure** (the smart way!)
 
@@ -134,8 +134,8 @@ This is the smartest workaround until Snowflake adds native support!
 | Database & Schema | ✅ Fully Automated | Created by Terraform |
 | Network Rules | ✅ Fully Automated | Created by Terraform |
 | API Integration | ✅ Fully Automated | Created by Terraform |
-| External Functions (11) | ✅ Fully Automated | Created by Terraform |
-| Wrapper Functions (11) | ✅ Fully Automated | Created by Terraform |
+| External Functions (12) | ✅ Fully Automated | Created by Terraform (v2 API) |
+| Wrapper Functions (12) | ✅ Fully Automated | Created by Terraform |
 | Role Creation | ✅ Fully Automated | Created by Terraform |
 | Permissions | ✅ Fully Automated | Granted by Terraform |
 | **Agent Procedure** | ✅ Fully Automated | **Created by Terraform!** |
