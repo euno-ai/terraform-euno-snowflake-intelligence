@@ -12,7 +12,7 @@ resource "snowflake_function" "euno_instructions_wrapper" {
     type = "NUMBER"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_INSTRUCTIONS\"(TO_VARIANT(PAGE))::STRING"
   comment     = "Wrapper function for euno_instructions with type safety"
@@ -28,30 +28,30 @@ resource "snowflake_function" "euno_count_resources_wrapper" {
 
   arguments {
     name = "QUERY"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "REASONING"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "GROUP_BY_PROPERTY"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "RESOURCE_RELATIONSHIP_SCHEMA"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "RELATED_USE_CASES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_COUNT_RESOURCES"(
@@ -75,15 +75,15 @@ resource "snowflake_function" "euno_fetch_single_resource_wrapper" {
 
   arguments {
     name = "RESOURCE_URI"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "PROPERTIES_TO_FETCH"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FETCH_SINGLE_RESOURCE"(
@@ -104,25 +104,25 @@ resource "snowflake_function" "euno_find_resource_by_name_wrapper" {
 
   arguments {
     name = "RESOURCE_NAME"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "REASONING"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "FILTER_BY_RESOURCE_TYPES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "PROPERTIES_TO_RETURN"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCE_BY_NAME"(
@@ -145,25 +145,25 @@ resource "snowflake_function" "euno_find_resources_for_topic_wrapper" {
 
   arguments {
     name = "QUERY_STRINGS"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "REASONING"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "FILTER_BY_RESOURCE_TYPES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "PROPERTIES_TO_RETURN"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_FIND_RESOURCES_FOR_TOPIC"(
@@ -186,30 +186,30 @@ resource "snowflake_function" "euno_get_upstream_lineage_wrapper" {
 
   arguments {
     name = "RESOURCE_URI"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "REASONING"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "PROPERTIES_TO_FETCH"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "RELATED_USE_CASES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "FILTER_BY_RESOURCE_TYPES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_GET_UPSTREAM_LINEAGE"(
@@ -233,10 +233,10 @@ resource "snowflake_function" "euno_resource_impact_analysis_wrapper" {
 
   arguments {
     name = "URI"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_RESOURCE_IMPACT_ANALYSIS\"(TO_VARIANT(URI))::STRING"
   comment     = "Wrapper function for euno_resource_impact_analysis with type safety"
@@ -252,40 +252,40 @@ resource "snowflake_function" "euno_search_resources_wrapper" {
 
   arguments {
     name = "QUERY"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "REASONING"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "RESOURCE_RELATIONSHIP_SCHEMA"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "RELATED_USE_CASES"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "ORDER_BY_PROPERTY"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "ORDER_DIRECTION"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
     name = "PROPERTIES_TO_RETURN"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_SEARCH_RESOURCES"(
@@ -311,10 +311,10 @@ resource "snowflake_function" "euno_documentation_search_wrapper" {
 
   arguments {
     name = "QUERY"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_SEARCH\"(TO_VARIANT(QUERY))::STRING"
   comment     = "Wrapper function for euno_documentation_search with type safety"
@@ -330,10 +330,10 @@ resource "snowflake_function" "euno_documentation_get_full_document_wrapper" {
 
   arguments {
     name = "URL"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = "SELECT \"${snowflake_database.intelligence.name}\".\"${snowflake_schema.agents.name}\".\"EUNO_DOCUMENTATION_GET_FULL_DOCUMENT\"(TO_VARIANT(URL))::STRING"
   comment     = "Wrapper function for euno_documentation_get_full_document with type safety"
@@ -349,7 +349,7 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context_wrappe
 
   arguments {
     name = "CHUNK_ID"
-    type = "STRING"
+    type = "VARCHAR"
   }
 
   arguments {
@@ -357,7 +357,7 @@ resource "snowflake_function" "euno_documentation_get_surrounding_context_wrappe
     type = "NUMBER"
   }
 
-  return_type = "STRING"
+  return_type = "VARCHAR"
   language    = "SQL"
   statement   = <<-SQL
     SELECT "${snowflake_database.intelligence.name}"."${snowflake_schema.agents.name}"."EUNO_DOCUMENTATION_GET_SURROUNDING_CONTEXT"(
