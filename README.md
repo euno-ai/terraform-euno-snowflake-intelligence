@@ -134,7 +134,7 @@ This is the smartest workaround until Snowflake adds native support!
 | Database & Schema | ✅ Fully Automated | Created by Terraform |
 | Network Rules | ✅ Fully Automated | Created by Terraform |
 | API Integration | ✅ Fully Automated | Created by Terraform |
-| External Functions (12) | ✅ Fully Automated | Created by Terraform (v2 API) |
+| External Functions (12) | ✅ Fully Automated | Created by Terraform |
 | Wrapper Functions (12) | ✅ Fully Automated | Created by Terraform |
 | Role Creation | ✅ Fully Automated | Created by Terraform |
 | Permissions | ✅ Fully Automated | Granted by Terraform |
